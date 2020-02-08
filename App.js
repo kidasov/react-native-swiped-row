@@ -8,106 +8,86 @@
 
 import React from 'react';
 import {
-  SafeAreaView,
   StyleSheet,
-  ScrollView,
   View,
   Text,
-  StatusBar,
+  FlatList,
+  UIManager,
+  LayoutAnimation,
 } from 'react-native';
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import SwipeRow from './components/SwipeRow';
+import {useEffect, useState} from 'react';
 
-const App: () => React$Node = () => {
+const names = [
+  'Rebecca',
+  'John',
+  'Samanta',
+  'Ken',
+  'Ivar',
+  'Bjorn',
+  'Priscilla',
+  'Geralt',
+];
+
+let contactList = [...Array(30).keys()].map(x => {
+  return {
+    id: x,
+    name: names[Math.floor(Math.random() * names.length)],
+    style: {
+      backgroundColor: `#${(((1 << 24) * Math.random()) | 0).toString(16)}`,
+    },
+  };
+});
+
+const App = () => {
+  const [contacts, setContacts] = useState(contactList);
+
+  useEffect(() => {
+    UIManager.setLayoutAnimationEnabledExperimental &&
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+  }, []);
+
+  const onAnimationComplete = contact => {
+    setContacts(contacts.filter(c => contact.id !== c.id));
+    // run system animation
+    LayoutAnimation.configureNext(
+      LayoutAnimation.create(
+        200,
+        LayoutAnimation.Types.easeInEaseOut,
+        'opacity',
+      ),
+    );
+  };
+
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
+    <FlatList
+      data={contacts}
+      renderItem={({item}) => {
+        return (
+          <SwipeRow onAnimationComplete={() => onAnimationComplete(item)}>
+            <View style={[styles.item, item.style]}>
+              <Text>{item.name}</Text>
             </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
+          </SwipeRow>
+        );
+      }}
+      contentContainerStyle={styles.content}
+      keyExtractor={item => item.id.toString()}
+    />
   );
 };
 
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
+  content: {
+    marginHorizontal: 10,
   },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
+
+  item: {
+    borderWidth: 1,
+    borderColor: '#dfdfdf',
+    marginVertical: 10,
+    padding: 10,
   },
 });
 
