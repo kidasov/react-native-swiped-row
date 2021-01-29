@@ -16,7 +16,7 @@ import {
   LayoutAnimation,
 } from 'react-native';
 
-import SwipeRow from './components/SwipeRow';
+import SwipeRow from 'react-native-swipe-row';
 import {useEffect, useState} from 'react';
 
 const names = [
@@ -40,7 +40,7 @@ let contactList = [...Array(30).keys()].map(x => {
   };
 });
 
-const App = () => {
+const Example = () => {
   const [contacts, setContacts] = useState(contactList);
 
   useEffect(() => {
@@ -91,4 +91,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default Example;
