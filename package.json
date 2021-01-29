@@ -1,7 +1,6 @@
 {
-  "name": "react-native-swipe-row",
+  "name": "react-native-swiped-row",
   "version": "0.0.1",
-  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
